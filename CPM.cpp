@@ -342,7 +342,7 @@ public:
         CompletionTime.setPosition(200, 535);
         CompletionTime.setCharacterSize(18);
         CompletionTime.setFillColor(sf::Color::Black);
-        CompletionTime.setString("Minmuum Completion time: " + to_string(MinCompletionTime));
+        CompletionTime.setString("Minimum Completion time: " + to_string(MinCompletionTime));
 
         msg.setFont(displayfont);
         msg.setPosition(765, 535);
