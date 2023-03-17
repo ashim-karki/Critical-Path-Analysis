@@ -3,28 +3,30 @@
 #include<cstdlib>
 #include<iostream>
 #include<unordered_map>
+#include<queue>
 using namespace std;
-
+int MinCompletionTime = 0;
 class Vertex
 {
 public:
     std::string data;
     int time;
     int  id;
+    bool cflag = false;
     int earliest_start_time;
     int early_finish_time;
     int late_start_time;
     int latest_finish_time;
     int slack;
     bool visited;
-    bool cflag = false;
 
+    //x and y are used to postion vertex during graph rendering
     float x = 0;
     float y = 0;
-    //Vertex(int I,float X,float Y):id(I),x(X),y(Y){};
 
 
-    Vertex(std::string data, int time, int ID, bool flag = false) : data(data), time(time), id(ID), cflag(flag),
+
+    Vertex(std::string data, int time, bool flag = false) : data(data), time(time), cflag(flag),
         earliest_start_time(0), early_finish_time(0),
         late_start_time(0), latest_finish_time(100), slack(-1),
         visited(false)
@@ -51,7 +53,7 @@ public:
     int ID = 1123;
 
 
-    Vertex* finish_vertex = new Vertex(FinalVertexName, FinalVertexTime, ID, true);
+    Vertex* finish_vertex = new Vertex(FinalVertexName, FinalVertexTime, true);
 
     void add_edge(Vertex* v1, Vertex* v2, char last_node)
     {
@@ -70,16 +72,15 @@ public:
         std::string name;
         int time;
         char last_node;
-        int id;
+
 
         std::cout << "Enter the name of the new vertex: ";
         std::cin >> name;
         std::cout << "Enter the time associated with the new vertex: ";
         std::cin >> time;
-        std::cout << "enter unique id";
-        std::cin >> id;
 
-        Vertex* new_vertex = new Vertex(name, time, id);
+
+        Vertex* new_vertex = new Vertex(name, time);
         add_vertex(new_vertex);
 
         new_vertex->earliest_start_time = 0;
@@ -167,6 +168,7 @@ public:
 
                 cout << vertex->data << "\t";
                 vertex->cflag = true;
+                MinCompletionTime += vertex->time;
             }
         }
     }
@@ -214,6 +216,54 @@ public:
         }*/
     }
 
+    void sort_graph_topologically()
+    {
+        std::unordered_map<Vertex*, int> in_degree;
+        for (auto vertex : vertices)
+        {
+            in_degree[vertex] = 0;
+        }
+
+        for (auto vertex : vertices)
+        {
+            for (auto neighbor : edges[vertex])
+            {
+                ++in_degree[neighbor];
+            }
+        }
+
+        std::queue<Vertex*> q;
+        for (auto vertex : vertices)
+        {
+            if (in_degree[vertex] == 0)
+            {
+                q.push(vertex);
+            }
+        }
+
+        std::vector<Vertex*> sorted;
+        while (!q.empty())
+        {
+            auto current = q.front();
+            q.pop();
+            sorted.push_back(current);
+            for (auto neighbor : edges[current])
+            {
+                --in_degree[neighbor];
+                if (in_degree[neighbor] == 0)
+                {
+                    q.push(neighbor);
+                }
+            }
+        }
+
+        std::cout << "Topological sort of the graph: " << std::endl;
+        for (auto vertex : sorted)
+        {
+            std::cout << vertex->data << " (" << vertex->time << ")" << std::endl;
+        }
+    }
+
 
 
 
@@ -238,7 +288,15 @@ public:
     }
 
 
-
+    void updateID()
+    {
+        int i = 0;
+        for (auto it : vertices)
+        {
+            it->id = i;
+            i++;
+        }
+    }
 
 };
 
@@ -254,6 +312,8 @@ public:
 public:
     sf::Text name;
     sf::Text LST;
+    sf::Text CompletionTime;
+    sf::Text msg;
 
     Output() {};
     Output(sf::Vector2f coord) : coordinates(coord) {};
@@ -270,17 +330,30 @@ public:
 
 
 
-        name.setOutlineColor(sf::Color::White);
+        name.setOutlineColor(sf::Color::Black);
 
         name.setCharacterSize(18);
         LST.setCharacterSize(12);
+        LST.setFillColor(sf::Color::Black);
 
-        name.setFillColor(sf::Color::White);
+        name.setFillColor(sf::Color::Black);
 
+        CompletionTime.setFont(displayfont);
+        CompletionTime.setPosition(200, 535);
+        CompletionTime.setCharacterSize(18);
+        CompletionTime.setFillColor(sf::Color::Black);
+        CompletionTime.setString("Minmuum Completion time: " + to_string(MinCompletionTime));
 
-
+        msg.setFont(displayfont);
+        msg.setPosition(765, 535);
+        msg.setCharacterSize(18);
+        msg.setFillColor(sf::Color::Black);
+        //CompletionTime.setString("Minmuum Completion time: "+ to_string(MinCompletionTime)); 
         window.draw(name);
         window.draw(LST);
+        window.draw(CompletionTime);
+        window.draw(msg);
+
     }
     string convert(int EST, int EFT, int LST, int LFT)
     {
@@ -306,12 +379,16 @@ int main()
         graph.add_new_vertex();
     }
     graph.add_vertex(graph.finish_vertex);
+    graph.updateID();
 
     graph.backward_pass();
+    graph.sort_graph_topologically();
 
     graph.print_vertices_and_edges();
 
     graph.calculate_CP();
+
+    cout << "cp time " << MinCompletionTime;
 
     // for(int i=0;i<4;i++)
     // {
@@ -337,12 +414,12 @@ int main()
     {
         if ((it->id) % 2 == 0) {
             it->x = 100 + i * 50;
-            it->y = 200 + j * 20;
+            it->y = 300 + j * 20;
         }
         else
         {
             it->x = 100 + i * 50;
-            it->y = 200 - j * 20;
+            it->y = 300 - j * 20;
         }
         i += 2;
         j++;
@@ -373,14 +450,18 @@ int main()
     {
         cout << "error loading file" << endl;
     }
+    window.clear(sf::Color(255, 255, 255));
     dest.setFillColor(sf::Color::Red);
     source.setFillColor(sf::Color::Green);
     source.setPosition(sf::Vector2f(200 - 20, 200 - 20));
     dest.setPosition(sf::Vector2f(200 - 20, 80 - 20));
     sf::VertexArray line(sf::Lines, 2);
     line[0].position = sf::Vector2f(200, 200);
+    line[0].color = sf::Color::Black; line[1].color = sf::Color::Black;
     line[1].position = sf::Vector2f(200, 80);
+
     sf::VertexArray line2(sf::Lines, 2);
+    line2[0].color = sf::Color::Black; line2[1].color = sf::Color::Black;
     line[0].position = sf::Vector2f(200, 200);
     line2[1].position = sf::Vector2f(200, 80);
     while (window.isOpen())
@@ -391,11 +472,8 @@ int main()
             if (event.type == sf::Event::Closed)
                 window.close();
         }
+        window.clear(sf::Color(255, 255, 255, 180));
 
-        window.clear();
-        window.draw(source);
-
-        window.draw(dest);
 
         for (auto vertex : graph.vertices) {
 
@@ -423,12 +501,19 @@ int main()
                 window.draw(dest);
             output.name.setString(it->data);
             output.LST.setString(output.convert(it->earliest_start_time, it->early_finish_time, it->late_start_time, it->latest_finish_time));
+
             output.coordinates.x = it->x;
             output.coordinates.y = it->y;
             output.printOutput(window);
 
 
+
         }
+        dest.setPosition(sf::Vector2f(750 - 20, 550 - 20));
+        window.draw(dest);
+        output.msg.setString(":Critical Nodes");
+        output.printOutput(window);
+
 
         window.display();
 
