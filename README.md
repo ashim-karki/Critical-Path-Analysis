@@ -1,6 +1,6 @@
 # Critical-Path-Analysis
 
-<h3><b>Note:<br>All SFML files have already been included in the folder. Just download and run to program in Visual Studio IDE.</b></h3>
+<h3><b>Note:<br>All SFML files have already been included in the folder. Just download and run to program in Visual Studio IDE. ALso check out: https://github.com/paudelanil/Critical-Path-Analysis for LINUX version.</b></h3>
 
 <h3>Critical Path Analysis</h3>
 Critical path analysis (CPA) is a:
@@ -35,5 +35,3 @@ Giving the above example as input to our program:
 
 SFML output:
 ![image](https://user-images.githubusercontent.com/86644466/226088150-f302a95b-38f1-46ab-a6ae-76630e026261.png)
-
-Check out: https://github.com/paudelanil/Critical-Path-Analysis for LINUX version.
