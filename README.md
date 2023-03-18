@@ -35,3 +35,5 @@ Giving the above example as input to our program:
 
 SFML output:
 ![image](https://user-images.githubusercontent.com/86644466/226088150-f302a95b-38f1-46ab-a6ae-76630e026261.png)
+
+Check out: https://github.com/paudelanil/Critical-Path-Analysis for LINUX version.
