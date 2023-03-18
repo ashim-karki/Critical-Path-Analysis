@@ -2,6 +2,7 @@
 
 <h3>Critical Path Analysis</h3>
 Critical path analysis (CPA) is a:
+
   - Project management technique 
   - Maps out every key task
   - It includes identifying the amount of time necessary to finish each activity 
