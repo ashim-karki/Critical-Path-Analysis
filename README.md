@@ -7,7 +7,8 @@ Critical path analysis (CPA) is a:
   - It includes identifying the amount of time necessary to finish each activity 
   - The dependencies of each activity on any others
   - Then calculation of minimum time to complete a project
-  
+
+
 Concepts Used:
   - Graph data structure
   - Topological sorting
