@@ -24,8 +24,6 @@ public:
     float x = 0;
     float y = 0;
 
-
-
     Vertex(std::string data, int time, bool flag = false) : data(data), time(time), cflag(flag),
         earliest_start_time(0), early_finish_time(0),
         late_start_time(0), latest_finish_time(100), slack(-1),
@@ -33,7 +31,6 @@ public:
     {
     }
 };
-
 
 class Graph
 {
@@ -45,14 +42,9 @@ public:
     {
         vertices.push_back(vertex);
     }
-
-
-
     string FinalVertexName = "FinalVertex";
     int FinalVertexTime = 0;
     int ID = 1123;
-
-
     Vertex* finish_vertex = new Vertex(FinalVertexName, FinalVertexTime, true);
 
     void add_edge(Vertex* v1, Vertex* v2, char last_node)
@@ -72,26 +64,20 @@ public:
         std::string name;
         int time;
         char last_node;
-
-
         std::cout << "Enter the name of the new vertex: ";
         std::cin >> name;
         std::cout << "Enter the time associated with the new vertex: ";
         std::cin >> time;
-
-
         Vertex* new_vertex = new Vertex(name, time);
         add_vertex(new_vertex);
-
         new_vertex->earliest_start_time = 0;
         new_vertex->early_finish_time = new_vertex->earliest_start_time + time;
-
         std::string dependancy_name;
         std::cout << "Enter the name of a dependant vertex (if any else press X to exit): ";
         std::cin >> dependancy_name;
         cout << "Last node? y/n: ";
-        cin >> last_node; // FIND A BETTER PLACEMENT AS IT IS CALLED MANY TIMES
-        while (dependancy_name != "X")
+        cin >> last_node; 
+        while (dependancy_name != "X" && dependancy_name != "x")
         {
             Vertex* dependancy = nullptr;
             for (auto vertex : vertices)
@@ -102,15 +88,11 @@ public:
                     break;
                 }
             }
-
             if (dependancy->early_finish_time > new_vertex->earliest_start_time)
             {
                 new_vertex->earliest_start_time = dependancy->early_finish_time;
                 new_vertex->early_finish_time = new_vertex->earliest_start_time + time;
             }
-
-
-
             if (dependancy)
             {
                 add_edge(new_vertex, dependancy, last_node);
@@ -119,7 +101,6 @@ public:
             {
                 std::cout << "Error: specified dependant vertex not found." << std::endl;
             }
-
             std::cout << "Enter the name of a dependant vertex (if any else press X to exit):  ";
             std::cin >> dependancy_name;
         }
@@ -164,8 +145,6 @@ public:
             vertex->slack = vertex->earliest_start_time - vertex->late_start_time;
             if (vertex->slack == 0)
             {
-
-
                 cout << vertex->data << "\t";
                 vertex->cflag = true;
                 MinCompletionTime += vertex->time;
@@ -184,8 +163,6 @@ public:
                 << " (" << vertex->late_start_time << ")"
                 << " (" << vertex->latest_finish_time << ")" << std::endl;
         }
-
-
         std::cout << "Edges:" << std::endl;
         for (auto vertex : vertices) {
             std::cout << vertex->data;
@@ -215,7 +192,6 @@ public:
             std::cout << std::endl;
         }*/
     }
-
     void sort_graph_topologically()
     {
         std::unordered_map<Vertex*, int> in_degree;
@@ -231,7 +207,6 @@ public:
                 ++in_degree[neighbor];
             }
         }
-
         std::queue<Vertex*> q;
         for (auto vertex : vertices)
         {
@@ -240,7 +215,6 @@ public:
                 q.push(vertex);
             }
         }
-
         std::vector<Vertex*> sorted;
         while (!q.empty())
         {
@@ -256,21 +230,12 @@ public:
                 }
             }
         }
-
         std::cout << "Topological sort of the graph: " << std::endl;
         for (auto vertex : sorted)
         {
             std::cout << vertex->data << " (" << vertex->time << ")" << std::endl;
         }
     }
-
-
-
-
-
-
-
-
 
     void printEdge()
     {
@@ -287,7 +252,6 @@ public:
         }
     }
 
-
     void updateID()
     {
         int i = 0;
@@ -297,15 +261,11 @@ public:
             i++;
         }
     }
-
 };
-
 
 class Output
 {
 public:
-
-
     sf::Font displayfont;
     sf::Vector2f coordinates;
 
@@ -314,7 +274,6 @@ public:
     sf::Text LST;
     sf::Text CompletionTime;
     sf::Text msg;
-
     Output() {};
     Output(sf::Vector2f coord) : coordinates(coord) {};
 
@@ -325,25 +284,16 @@ public:
         LST.setFont(displayfont);
         LST.setPosition(coordinates.x, coordinates.y + 30);
         name.setPosition(coordinates.x, coordinates.y + 10);
-
-
-
-
-
         name.setOutlineColor(sf::Color::Black);
-
         name.setCharacterSize(18);
         LST.setCharacterSize(12);
         LST.setFillColor(sf::Color::Black);
-
         name.setFillColor(sf::Color::Black);
-
         CompletionTime.setFont(displayfont);
         CompletionTime.setPosition(200, 535);
         CompletionTime.setCharacterSize(18);
         CompletionTime.setFillColor(sf::Color::Black);
         CompletionTime.setString("Minimum Completion time: " + to_string(MinCompletionTime));
-
         msg.setFont(displayfont);
         msg.setPosition(765, 535);
         msg.setCharacterSize(18);
@@ -367,10 +317,8 @@ public:
 };
 int main()
 {// float col = 1080/2.0;
-
     Graph graph;
     Output output;
-
     std::cout << "Enter the number of vertices: ";
     int num_vertices;
     std::cin >> num_vertices;
@@ -380,32 +328,19 @@ int main()
     }
     graph.add_vertex(graph.finish_vertex);
     graph.updateID();
-
     graph.backward_pass();
     graph.sort_graph_topologically();
-
     graph.print_vertices_and_edges();
-
     graph.calculate_CP();
-
     cout << "cp time " << MinCompletionTime;
-
     // for(int i=0;i<4;i++)
     // {
     //    Vertex *newV =new Vertex(i,0,0);
     //    Vertex *newV1 = new Vertex(3*i,0,0);
     //     g.add_vertex(newV1);
     //     g.add_vertex(newV);
-
     //     g.add_edge(newV,newV1);  //we need to generate new unordered map to store the edges
-
-
-
     // }
-
-
-
-
     int i = 1;
     int j = 0;
     //use this to setup the distancse so that not clustered form
@@ -438,10 +373,6 @@ int main()
         std::cout << std::endl;
     }
 
-
-
-
-
     sf::RenderWindow window(sf::VideoMode(1080, 720), "SFML works!");
     sf::CircleShape source(20.f);
     sf::CircleShape dest(20.f);
@@ -459,7 +390,6 @@ int main()
     line[0].position = sf::Vector2f(200, 200);
     line[0].color = sf::Color::Black; line[1].color = sf::Color::Black;
     line[1].position = sf::Vector2f(200, 80);
-
     sf::VertexArray line2(sf::Lines, 2);
     line2[0].color = sf::Color::Black; line2[1].color = sf::Color::Black;
     line[0].position = sf::Vector2f(200, 200);
@@ -473,8 +403,6 @@ int main()
                 window.close();
         }
         window.clear(sf::Color(255, 255, 255, 180));
-
-
         for (auto vertex : graph.vertices) {
 
             auto it = graph.edges.find(vertex);
@@ -489,7 +417,6 @@ int main()
                     window.draw(line2);
                 }
             }
-
         }
         for (auto it : graph.vertices)
         {
@@ -505,20 +432,12 @@ int main()
             output.coordinates.x = it->x;
             output.coordinates.y = it->y;
             output.printOutput(window);
-
-
-
         }
         dest.setPosition(sf::Vector2f(750 - 20, 550 - 20));
         window.draw(dest);
         output.msg.setString(":Critical Nodes");
         output.printOutput(window);
-
-
         window.display();
-
-
     }
-
     return 0;
 }
