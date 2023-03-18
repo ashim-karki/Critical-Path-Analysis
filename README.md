@@ -1,4 +1,4 @@
-<h3><b>All SFML files have already been included in the folder. Just download and run to program in Visual Studio IDE.</b></h3>
+<h3><b>Note:<br>All SFML files have already been included in the folder. Just download and run to program in Visual Studio IDE.</b></h3>
 
 <h3>Critical Path Analysis</h3>
 Critical path analysis (CPA) is a:
