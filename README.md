@@ -11,7 +11,7 @@ Critical path analysis (CPA) is a:
 
 Concepts Used:
   - Graph data structure
-  - Topological sorting
+  - Topological Sorting
   - PERT Chart
   
 ![image](https://user-images.githubusercontent.com/86644466/226087684-991da9ec-d0d1-4ba7-9a09-f5468c4b3e5f.png)
