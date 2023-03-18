@@ -28,3 +28,8 @@ The dependency table of the above example is:
 | G	         | 6     |	E	         | y	              | Content Creation and Addition
 | Final Node | -     |	-	         | -	              | Demo Launch
 
+Giving the above example as input to our program:
+![image](https://user-images.githubusercontent.com/86644466/226088126-a7e7ef45-7084-4ad4-b15f-afec8edfa3f9.png)
+
+SFML output:
+![image](https://user-images.githubusercontent.com/86644466/226088150-f302a95b-38f1-46ab-a6ae-76630e026261.png)
