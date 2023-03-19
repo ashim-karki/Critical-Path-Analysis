@@ -23,7 +23,8 @@ public:
     //x and y are used to postion vertex during graph rendering
     float x = 0;
     float y = 0;
-
+    
+    //constructor
     Vertex(std::string data, int time, bool flag = false) : data(data), time(time), cflag(flag),
         earliest_start_time(0), early_finish_time(0),
         late_start_time(0), latest_finish_time(100), slack(-1),
@@ -40,21 +41,21 @@ public:
 
     void add_vertex(Vertex* vertex)
     {
-        vertices.push_back(vertex);
+        vertices.push_back(vertex); //topologically sorted nodes vector
     }
     string FinalVertexName = "FinalVertex";
     int FinalVertexTime = 0;
     int ID = 1123;
-    Vertex* finish_vertex = new Vertex(FinalVertexName, FinalVertexTime, true);
+    Vertex* finish_vertex = new Vertex(FinalVertexName, FinalVertexTime, true); //final node to store final Early finish time (EFT) during forward pass as final node's late start time (LST)
 
     void add_edge(Vertex* v1, Vertex* v2, char last_node)
     {
-        edges[v2].push_back(v1);
+        edges[v2].push_back(v1); //adjacency list for graph
         if (last_node == 'y' || last_node == 'Y')
         {
             if (v1->early_finish_time > finish_vertex->late_start_time)
             {
-                finish_vertex->late_start_time = v1->early_finish_time;
+                finish_vertex->late_start_time = v1->early_finish_time; //final node to store EFT i.e. LST of final node 
             }
             edges[v1].push_back(finish_vertex);
         }
@@ -70,7 +71,7 @@ public:
         std::cin >> time;
         Vertex* new_vertex = new Vertex(name, time);
         add_vertex(new_vertex);
-        new_vertex->earliest_start_time = 0;
+        new_vertex->earliest_start_time = 0; //FORWARD PASS FOR FIRST NODE
         new_vertex->early_finish_time = new_vertex->earliest_start_time + time;
         std::string dependancy_name;
         std::cout << "Enter the name of a dependant vertex (if any else press X to exit): ";
@@ -88,7 +89,7 @@ public:
                     break;
                 }
             }
-            if (dependancy->early_finish_time > new_vertex->earliest_start_time)
+            if (dependancy->early_finish_time > new_vertex->earliest_start_time) //update EST and EFT depending upon the dependencies
             {
                 new_vertex->earliest_start_time = dependancy->early_finish_time;
                 new_vertex->early_finish_time = new_vertex->earliest_start_time + time;
@@ -108,7 +109,7 @@ public:
     void backward_pass()
     {
         vector<Vertex*> reverse_vertices = vertices;
-        reverse(reverse_vertices.begin(), reverse_vertices.end());
+        reverse(reverse_vertices.begin(), reverse_vertices.end()); //FOR BACKWARD PASS
         cout << endl;
         std::cout << "Reverse Vertices:" << std::endl;
         for (auto vertex : reverse_vertices)
@@ -123,7 +124,7 @@ public:
         for (auto vertex : reverse_vertices)
         {
             auto it = edges.find(vertex);
-            if (it != edges.end())
+            if (it != edges.end()) //no need to calculate for the final node as it only stores LST
             {
                 for (auto neighbor : it->second)
                 {
@@ -142,7 +143,7 @@ public:
         cout << "critical path" << endl;
         for (auto vertex : vertices)
         {
-            vertex->slack = vertex->earliest_start_time - vertex->late_start_time;
+            vertex->slack = vertex->earliest_start_time - vertex->late_start_time; //calculate slack time
             if (vertex->slack == 0)
             {
                 cout << vertex->data << "\t";
